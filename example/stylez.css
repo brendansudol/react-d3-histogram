@@ -1,0 +1,37 @@
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6 {
+    font-family: 'Lato', sans-serif;
+    color: #555;
+}
+
+.container {
+    padding: 0 15px;
+    margin: 30px auto;
+    max-width: 700px;
+}
+
+svg {
+    font-size: 10px;
+}
+
+svg rect {
+    fill: steelblue;
+}
+
+svg .axis path,
+svg .axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
