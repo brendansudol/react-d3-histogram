@@ -33,7 +33,10 @@ var Main = React.createClass({
 
         return (
           <div>
-            <textarea className="form-control" onChange={this.handleChange}>{this.state.text}</textarea>
+            <textarea 
+                className="form-control" 
+                onChange={this.handleChange} 
+                defaultValue={this.state.text}></textarea>
             <br/>
             <Stats data={data} />
             <Histogram data={data} />

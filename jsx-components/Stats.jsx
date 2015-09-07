@@ -23,21 +23,37 @@ var Stats = React.createClass({
         var data = this.props.data;
 
         return {
-            n: data.length,
+            count: data.length,
             mean: ss.mean(data),
             median: ss.median(data),
+            mode: ss.mode(data),
+            min: ss.min(data),
+            max: ss.max(data),
             sum: ss.sum(data),
         };
     },
 
     render: function() {
         var stats = this.get_stats();
+        var display_stats = [
+            'count', 'min', 'max',
+            'mean', 'median', 'sum'
+        ];
 
         return (
-          <div className="stats">
-            <p>count: {stats.n}</p>
-            <p>mean: {stats.mean}</p>
-            <p>sum: {stats.sum}</p>
+          <div className="row">
+            {
+                display_stats.map(function(name) {
+                    return (
+                        <div key={name} className="col-xs-6 col-sm-4">
+                            <div className="stat-box">
+                                <div className="stat-num">{stats[name]}</div>
+                                <div className="stat-name">{name}</div>
+                            </div>
+                        </div>
+                    );
+                })
+            }
           </div>
         );
     },

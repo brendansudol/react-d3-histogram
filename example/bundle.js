@@ -79,7 +79,10 @@
 
 	        return (
 	          React.createElement("div", null, 
-	            React.createElement("textarea", {className: "form-control", onChange: this.handleChange}, this.state.text), 
+	            React.createElement("textarea", {
+	                className: "form-control", 
+	                onChange: this.handleChange, 
+	                defaultValue: this.state.text}), 
 	            React.createElement("br", null), 
 	            React.createElement(Stats, {data: data}), 
 	            React.createElement(Histogram, {data: data})
@@ -20499,21 +20502,37 @@
 	        var data = this.props.data;
 
 	        return {
-	            n: data.length,
+	            count: data.length,
 	            mean: ss.mean(data),
 	            median: ss.median(data),
+	            mode: ss.mode(data),
+	            min: ss.min(data),
+	            max: ss.max(data),
 	            sum: ss.sum(data),
 	        };
 	    },
 
 	    render: function() {
 	        var stats = this.get_stats();
+	        var display_stats = [
+	            'count', 'min', 'max',
+	            'mean', 'median', 'sum'
+	        ];
 
 	        return (
-	          React.createElement("div", {className: "stats"}, 
-	            React.createElement("p", null, "count: ", stats.n), 
-	            React.createElement("p", null, "mean: ", stats.mean), 
-	            React.createElement("p", null, "sum: ", stats.sum)
+	          React.createElement("div", {className: "row"}, 
+	            
+	                display_stats.map(function(name) {
+	                    return (
+	                        React.createElement("div", {key: name, className: "col-xs-6 col-sm-4"}, 
+	                            React.createElement("div", {className: "stat-box"}, 
+	                                React.createElement("div", {className: "stat-num"}, stats[name]), 
+	                                React.createElement("div", {className: "stat-name"}, name)
+	                            )
+	                        )
+	                    );
+	                })
+	            
 	          )
 	        );
 	    },
@@ -23104,13 +23123,6 @@
 	            h = this.props.height,
 	            m = this.props.margin;
 
-	        var svg = d3.select(React.findDOMNode(this.refs.svg))
-	            .attr("class", "histogram")
-	            .attr("width", w + m.left + m.right)
-	            .attr("height", h + m.top + m.bottom)
-	            .append("g")
-	            .attr("transform", "translate(" + m.left + "," + m.top + ")");
-
 	        this._setXscale();
 	        this._binData();
 	        this._setYscale();
@@ -23119,6 +23131,13 @@
 	            .scale(this.x)
 	            .ticks(this.props.buckets)
 	            .orient("bottom");
+
+	        var svg = d3.select(React.findDOMNode(this.refs.svg))
+	            .attr("class", "histogram")
+	            .attr("width", w + m.left + m.right)
+	            .attr("height", h + m.top + m.bottom)
+	            .append("g")
+	            .attr("transform", "translate(" + m.left + "," + m.top + ")");
 
 	        var self = this;
 

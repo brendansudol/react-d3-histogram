@@ -1,24 +1,35 @@
-body,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-.h1,
-.h2,
-.h3,
-.h4,
-.h5,
-.h6 {
+body {
     font-family: 'Lato', sans-serif;
+    background-color: #f2f2f2;
     color: #555;
 }
 
 .container {
     padding: 0 15px;
     margin: 30px auto;
-    max-width: 700px;
+    max-width: 600px;
+}
+
+textarea {
+    resize: vertical;
+}
+
+.stat-box {
+    padding: 20px;
+    margin-bottom: 30px;
+    background-color: #fff;
+    text-align: center;
+}
+
+.stat-num {
+    font-size: 28px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.stat-name {
+    font-size: 18px;
+    font-weight: 300;
 }
 
 svg {
