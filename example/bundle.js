@@ -51,8 +51,13 @@
 
 	var Main = React.createClass({displayName: "Main",
 	    getInitialState: function() {
+	        var starter_nums = [
+	            0,1,1,2,3,3,3,3,4,4,4,4,4,5,5,
+	            5,5,5,5,6,6,6,6,6,7,8,7,8,8,9
+	        ];
+
 	        return {
-	            text: "2,3,4,5,6,12,13,8,8,8",
+	            text: starter_nums.join(','),
 	        };
 	    },
 
@@ -63,11 +68,11 @@
 	    },
 
 	    getNumbers: function() {
-	        var elements = this.state.text.split(','),
+	        var numbers = this.state.text.split(','),
 	        data = [];
 
-	        elements.forEach(function(d) {
-	            var num = parseFloat(d);
+	        numbers.forEach(function(n) {
+	            var num = parseFloat(n);
 	            if (!isNaN(num)) data.push(num);
 	        });
 
@@ -79,13 +84,23 @@
 
 	        return (
 	          React.createElement("div", null, 
+	            React.createElement("p", {className: "lead"}, 
+	                "Add comma delimited numbers to see summary stats and histogram."
+	            ), 
 	            React.createElement("textarea", {
 	                className: "form-control", 
 	                onChange: this.handleChange, 
-	                defaultValue: this.state.text}), 
+	                defaultValue: this.state.text, 
+	                placeholder: "Add comma delimited numbers"}), 
 	            React.createElement("br", null), 
 	            React.createElement(Stats, {data: data}), 
-	            React.createElement(Histogram, {data: data})
+	            React.createElement(Histogram, {data: data}), 
+	            React.createElement("hr", null), 
+	            React.createElement("p", null, 
+	                React.createElement("a", {href: "https://github.com/brendansudol/react-d3-histogram"}, 
+	                    "github repo →"
+	                )
+	            )
 	          )
 	        );
 	    }
@@ -20485,17 +20500,13 @@
 	    format: function(x) {
 	        if (isNaN(parseFloat(x))) return '—';
 
-	        var out;
-
-	        if (x === 0 || x % 1 === 0) {
-	            out = x;
+	        if (x % 1 === 0) {
+	            return x;
 	        } else if (x < 0.1) {
-	            out = x.toFixed(3);
+	            return x.toFixed(3);
 	        } else {
-	            out = x.toFixed(2);
+	            return x.toFixed(2);
 	        }
-
-	        return out;
 	    },
 
 	    get_stats: function() {
@@ -20518,6 +20529,7 @@
 	            'count', 'min', 'max',
 	            'mean', 'median', 'sum'
 	        ];
+	        var self = this;
 
 	        return (
 	          React.createElement("div", {className: "row"}, 
@@ -20526,8 +20538,12 @@
 	                    return (
 	                        React.createElement("div", {key: name, className: "col-xs-6 col-sm-4"}, 
 	                            React.createElement("div", {className: "stat-box"}, 
-	                                React.createElement("div", {className: "stat-num"}, stats[name]), 
-	                                React.createElement("div", {className: "stat-name"}, name)
+	                                React.createElement("div", {className: "stat-num"}, 
+	                                    self.format(stats[name])
+	                                ), 
+	                                React.createElement("div", {className: "stat-name"}, 
+	                                    name
+	                                )
 	                            )
 	                        )
 	                    );
@@ -23094,10 +23110,10 @@
 	var Histogram = React.createClass({displayName: "Histogram",
 	    getDefaultProps: function() {
 	        return {
-	            data: [1,3,4,5,5,6,10,12],
-	            width: 300,
-	            height: 70,
-	            margin: {top: 10, right: 30, bottom: 20, left: 10},
+	            data: [1,2,3,3,4,5,5,6,7,7,8,8,9,10],
+	            width: 570,
+	            height: 210,
+	            margin: {top: 10, right: 30, bottom: 30, left: 30},
 	            buckets: 10
 	        };
 	    },
@@ -23112,7 +23128,7 @@
 
 	    render: function(){
 	        return (
-	          React.createElement("div", null, 
+	          React.createElement("div", {id: "viz", className: this.props.data.length ? '' : 'hidden'}, 
 	            React.createElement("svg", {ref: "svg"})
 	          )
 	        );
@@ -23122,6 +23138,9 @@
 	        var w = this.props.width, 
 	            h = this.props.height,
 	            m = this.props.margin;
+
+	        this.chart_width = w - m.left - m.right;
+	        this.chart_height = h - m.top - m.bottom;
 
 	        this._setXscale();
 	        this._binData();
@@ -23134,10 +23153,15 @@
 
 	        var svg = d3.select(React.findDOMNode(this.refs.svg))
 	            .attr("class", "histogram")
-	            .attr("width", w + m.left + m.right)
-	            .attr("height", h + m.top + m.bottom)
+	            .attr("width", w)
+	            .attr("height", h)
 	            .append("g")
 	            .attr("transform", "translate(" + m.left + "," + m.top + ")");
+
+	        svg.append("g")
+	            .attr("class", "x axis")
+	            .attr("transform", "translate(0," + this.chart_height + ")")
+	            .call(this.xAxis);
 
 	        var self = this;
 
@@ -23148,12 +23172,9 @@
 	            .attr('x', function(d) { return self.x(d.x); })
 	            .attr('y', function(d) { return self.y(d.y); })
 	            .attr("width", self.x(self.data_binned[0].dx) - 1)
-	            .attr("height", function(d) { return h - self.y(d.y); });
-
-	        svg.append("g")
-	            .attr("class", "x axis")
-	            .attr("transform", "translate(0," + h + ")")
-	            .call(this.xAxis);
+	            .attr("height", function(d) { 
+	                return self.chart_height - self.y(d.y); 
+	            });
 	    },
 
 	    updateChart: function() {
@@ -23179,7 +23200,7 @@
 	        bars.enter().append("rect")
 	            .attr("class", "bar")
 	            .attr("y", this.y(0))
-	            .attr("height", this.props.height - this.y(0));
+	            .attr("height", this.chart_height - this.y(0));
 
 	        var self = this;
 
@@ -23188,7 +23209,7 @@
 	            .attr("y", function(d) { return self.y(d.y); })
 	            .attr("width", self.x(self.data_binned[0].dx) - 1)
 	            .attr("height", function(d) { 
-	              return self.props.height - self.y(d.y); 
+	              return self.chart_height - self.y(d.y); 
 	            });
 	    },
 
@@ -23201,13 +23222,13 @@
 	    _setXscale: function() {
 	        this.x = d3.scale.linear()
 	            .domain([0, Number(d3.max(this.props.data)) + 1])
-	            .range([0, this.props.width]);
+	            .range([0, this.chart_width]);
 	    },
 
 	    _setYscale: function() {
 	        this.y = d3.scale.linear()
 	            .domain([0, d3.max(this.data_binned, function(d) { return d.y; })])
-	            .range([this.props.height, 0]);
+	            .range([this.chart_height, 0]);
 	    }
 	});
 

@@ -1,6 +1,6 @@
 body {
     font-family: 'Lato', sans-serif;
-    background-color: #f2f2f2;
+    background-color: #f7f7f7;
     color: #555;
 }
 
@@ -10,8 +10,19 @@ body {
     max-width: 600px;
 }
 
+@media (min-width: 768px) {
+    .lead {
+        font-size: 19px;
+    }    
+}
+
 textarea {
     resize: vertical;
+}
+
+hr {
+    margin: 10px auto;
+    border-top: 2px solid #ebebeb;
 }
 
 .stat-box {
@@ -37,7 +48,7 @@ svg {
 }
 
 svg rect {
-    fill: steelblue;
+    fill: #FF703F;
 }
 
 svg .axis path,

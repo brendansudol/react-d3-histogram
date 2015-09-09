@@ -6,17 +6,13 @@ var Stats = React.createClass({
     format: function(x) {
         if (isNaN(parseFloat(x))) return '—';
 
-        var out;
-
-        if (x === 0 || x % 1 === 0) {
-            out = x;
+        if (x % 1 === 0) {
+            return x;
         } else if (x < 0.1) {
-            out = x.toFixed(3);
+            return x.toFixed(3);
         } else {
-            out = x.toFixed(2);
+            return x.toFixed(2);
         }
-
-        return out;
     },
 
     get_stats: function() {
@@ -39,6 +35,7 @@ var Stats = React.createClass({
             'count', 'min', 'max',
             'mean', 'median', 'sum'
         ];
+        var self = this;
 
         return (
           <div className="row">
@@ -47,8 +44,12 @@ var Stats = React.createClass({
                     return (
                         <div key={name} className="col-xs-6 col-sm-4">
                             <div className="stat-box">
-                                <div className="stat-num">{stats[name]}</div>
-                                <div className="stat-name">{name}</div>
+                                <div className="stat-num">
+                                    {self.format(stats[name])}
+                                </div>
+                                <div className="stat-name">
+                                    {name}
+                                </div>
                             </div>
                         </div>
                     );

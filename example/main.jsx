@@ -5,8 +5,13 @@ var Histogram = require('Histogram');
 
 var Main = React.createClass({
     getInitialState: function() {
+        var starter_nums = [
+            0,1,1,2,3,3,3,3,4,4,4,4,4,5,5,
+            5,5,5,5,6,6,6,6,6,7,8,7,8,8,9
+        ];
+
         return {
-            text: "2,3,4,5,6,12,13,8,8,8",
+            text: starter_nums.join(','),
         };
     },
 
@@ -17,11 +22,11 @@ var Main = React.createClass({
     },
 
     getNumbers: function() {
-        var elements = this.state.text.split(','),
+        var numbers = this.state.text.split(','),
         data = [];
 
-        elements.forEach(function(d) {
-            var num = parseFloat(d);
+        numbers.forEach(function(n) {
+            var num = parseFloat(n);
             if (!isNaN(num)) data.push(num);
         });
 
@@ -33,13 +38,23 @@ var Main = React.createClass({
 
         return (
           <div>
+            <p className="lead">
+                Add comma delimited numbers to see summary stats and histogram.
+            </p>
             <textarea 
                 className="form-control" 
                 onChange={this.handleChange} 
-                defaultValue={this.state.text}></textarea>
+                defaultValue={this.state.text}
+                placeholder="Add comma delimited numbers"></textarea>
             <br/>
             <Stats data={data} />
             <Histogram data={data} />
+            <hr/>
+            <p>
+                <a href="https://github.com/brendansudol/react-d3-histogram">
+                    github repo →
+                </a>
+            </p>
           </div>
         );
     }

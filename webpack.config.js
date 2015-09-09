@@ -1,6 +1,6 @@
 module.exports = {
 
-  entry: './example/main.jsx',
+  entry: './example/Main.jsx',
 
   output: {
     filename: 'bundle.js',
